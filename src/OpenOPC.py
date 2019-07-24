@@ -55,6 +55,7 @@ OPC_STATUS = (0, 'Running', 'Failed', 'NoConfig', 'Suspended', 'Test')
 BROWSER_TYPE = (0, 'Hierarchical', 'Flat')
 ACCESS_RIGHTS = (0, 'Read', 'Write', 'Read/Write')
 OPC_QUALITY = ('Bad', 'Uncertain', 'Unknown', 'Good')
+OPC_NAME = ('Canonical Data Type', 'Item Value', 'Item Quality', 'Item Timestamp', 'Item Access Rights', 'Server Scan Rate', 'EU Units', 'Item Description', 'High EU', 'Low EU', 'High Instrument Range', 'Low Instrument Range', 'Contact Close lable', 'Contact Open lable', 'Item Timezone')
 OPC_CLASS = 'Matrikon.OPC.Automation;Graybox.OPC.DAWrapper;HSCOPC.Automation;RSI.OPCAutomation;OPC.Automation'
 OPC_SERVER = 'Hci.TPNServer;HwHsc.OPCServer;opc.deltav.1;AIM.OPC.1;Yokogawa.ExaopcDAEXQ.1;OSI.DA.1;OPC.PHDServerDA.1;Aspen.Infoplus21_DA.1;National Instruments.OPCLabVIEW;RSLinx OPC Server;KEPware.KEPServerEx.V4;Matrikon.OPC.Simulation;Prosys.OPC.Simulation'
 OPC_CLIENT = 'OpenOPC'
@@ -946,7 +947,7 @@ class client():
             # Replace quality bits with quality strings
             try:
                i = property_id.index(3)
-               values[i] = quality_str(values[i])
+               values.append(quality_str(values[i])) # Quality value & string both are now added!
             except:
                pass
 
@@ -959,6 +960,9 @@ class client():
 
             if id != None:
                if single_property:
+                  # Now even in single property lits(props) will return a tuple!
+		  values.insert(0,id)
+                  values.insert(1,OPC_NAME[id - 1])
                   if single_tag:
                      tag_properties = values
                   else:
@@ -989,7 +993,7 @@ class client():
       props = self.iproperties(tags, id)
 
       if single:
-         return list(props)[0]
+         return list(props)
       else:
          return list(props)
 
